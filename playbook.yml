@@ -1,0 +1,42 @@
+---
+- hosts: ubuntuserver
+  become: yes
+  vars:
+    ansible_ssh_private_key_file: ./vyopta-test.pem
+    ansible_user: ubuntu
+    time:
+      apple: time.apple.com
+      google: time.google.com
+  tasks:
+    - name: Update package lists
+      ansible.builtin.command:
+        cmd: apt-get update
+
+    - name: Ensure chronyd is not installed
+      apt:
+        name: chrony
+        state: absent
+
+    - name: Ensure ntpd is not installed
+      apt:
+        name: ntp
+        state: absent
+
+    - name: Ensure systemd-timesyncd is installed
+      apt:
+        name: systemd-timesyncd
+        state: present
+
+    - name: Configure systemd-timesyncd
+      template:
+        src: ./template.j2
+        dest: /etc/systemd/timesyncd.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Enable and start systemd-timesyncd
+      systemd:
+        name: systemd-timesyncd
+        state: started
+        enabled: yes
