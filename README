@@ -1,0 +1,12 @@
+inventory.lst is your list of hosts
+
+playbook.yml is the ansible playbook
+
+template.j2 is the template for configuring the systemd-timesyncd service
+
+This playbook can be run with the command, "ansible-playbook -i inventory.lst playbook.yml" and does the following:
+    • Removes the chronyd service if it's installed.
+    • Removes the ntpd service if it's installed.
+    • Installs the systemd-timesyncd service.
+    • Configures the systemd-timesyncd via template.
+    • Enables and starts the systemd-timesyncd service.
